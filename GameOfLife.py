@@ -24,7 +24,7 @@ logo=pygame.image.load(".\logo.png")
 def display():
     screen.fill(GREY)
     '''
-    font = pygame.font.Font('BeforeCollapse.ttf', 2*HEIGHT)
+    font = pygame.font.Font('.ttf', 2*HEIGHT)
     text = font.render('GAME OF LIFE', True, WHITE, BLACK)
     textRect = text.get_rect()
     textRect.center = (501// 2, 9)
@@ -84,11 +84,14 @@ def check_n(x,y):
     else:
         new_m[x][y]=0
 
-
-for i in range(120):
-        new_m=copy.deepcopy(m)
-        for i in range(n):
-            for j in range(n):
-                check_n(i,j)
-        m=new_m
-        display()
+running=True
+while running:
+    new_m=copy.deepcopy(m)
+    for i in range(n):
+        for j in range(n):
+            check_n(i,j)
+    m=new_m
+    display()
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            running=False
