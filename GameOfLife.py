@@ -1,6 +1,6 @@
 #GAME OF LIFE
 import copy
-import os
+#import os
 import pygame
 
 #Display
@@ -18,17 +18,12 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("GameOfLife")
 clock = pygame.time.Clock()
 logo=pygame.image.load(".\logo.png")
-
+fps=4
 
 
 def display():
+    global fps
     screen.fill(GREY)
-    '''
-    font = pygame.font.Font('.ttf', 2*HEIGHT)
-    text = font.render('GAME OF LIFE', True, WHITE, BLACK)
-    textRect = text.get_rect()
-    textRect.center = (501// 2, 9)
-    '''
     screen.blit(logo,(0,0))
     
     for row in range(7,n):
@@ -37,7 +32,9 @@ def display():
             if m[row][column] == 1:
                 color = WHITE
             pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * column + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
-    clock.tick(5) 
+    if fps<=0.5:
+        fps+=1
+    clock.tick(fps) 
     pygame.display.flip()
 
 
@@ -51,6 +48,7 @@ for n_rows in range(n):
     m.append(row_temp)
 
 display()
+
 running=True
 while running:
     for event in pygame.event.get():
@@ -66,6 +64,7 @@ while running:
         elif event.type==pygame.QUIT:
             running=False
             quit()
+
 def check_n(x,y):
     global m
     global new_m
@@ -88,10 +87,18 @@ running=True
 while running:
     new_m=copy.deepcopy(m)
     for i in range(n):
+        if 1 not in m[i-1]+m[i]+m[(i+1)%n]:
+                continue
         for j in range(n):
+            
             check_n(i,j)
     m=new_m
     display()
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             running=False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                fps+=0.5
+            elif event.key == pygame.K_LEFT:
+                fps+=-0.5
