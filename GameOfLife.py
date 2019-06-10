@@ -1,6 +1,5 @@
 #GAME OF LIFE
 import copy
-#import os
 import pygame
 
 #Display
@@ -18,8 +17,21 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("GameOfLife")
 clock = pygame.time.Clock()
 logo=pygame.image.load(".\logo.png")
+start=pygame.image.load(".\start.png")
 fps=4
 
+#intro
+running=True
+screen.blit(start,(0,0))
+pygame.display.flip()
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key== pygame.K_RETURN:
+                running=False
+        elif event.type==pygame.QUIT:
+            running=False
+            quit()   
 
 def display():
     global fps
@@ -65,6 +77,7 @@ while running:
             running=False
             quit()
 
+# xth row and yth column
 def check_n(x,y):
     global m
     global new_m
