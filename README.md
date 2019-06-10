@@ -1,4 +1,4 @@
-# Conway's GameOfLife
+# Conway's Game Of Life
 School Project
 By-Vaibhav Agarwal
 
