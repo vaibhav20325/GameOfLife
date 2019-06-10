@@ -15,5 +15,5 @@ Another important fact about the rules for the game of life is that all rules ap
 
 After clicking on some boxes to make the intial setup, Press ENTER to Start.
 
-To increase the frame rate Press <kbd>Right</kbd>
-To decrease the frame rate Press <kbd>Left</kbd>
+To increase the frame rate Press <kbd>→</kbd>
+To decrease the frame rate Press <kbd>←</kbd>
