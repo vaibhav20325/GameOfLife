@@ -13,11 +13,14 @@ MARGIN = 1
 pygame.init()
 WINDOW_SIZE = [501, 501]
 
-screen = pygame.display.set_mode(WINDOW_SIZE)
-pygame.display.set_caption("GameOfLife")
-clock = pygame.time.Clock()
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
+winlogo=pygame.image.load(".\winlogo.png")
+
+screen = pygame.display.set_mode(WINDOW_SIZE)
+pygame.display.set_caption("GameOfLife")
+pygame.display.set_icon(winlogo)
+clock = pygame.time.Clock()
 fps=4
 
 #intro
