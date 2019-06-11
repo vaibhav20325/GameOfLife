@@ -17,3 +17,4 @@ After clicking on some boxes to make the intial setup, Press ENTER to Start.
 
 To increase the frame rate Press <kbd>→</kbd>
 To decrease the frame rate Press <kbd>←</kbd>
+To reset the initial position Press <kbd>Esc</kbd>
