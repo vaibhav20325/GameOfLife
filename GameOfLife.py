@@ -103,6 +103,22 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key== pygame.K_RETURN:
                     running=False
+                if event.key== pygame.K_1:
+                    m[20][25]=1
+                    m[21][24]=1
+                    m[21][25]=1
+                    m[21][26]=1
+                    m[22][24]=1
+                    m[22][26]=1
+                    m[27][24]=1
+                    m[27][26]=1
+                    m[28][24]=1
+                    m[28][26]=1
+                    m[29][24]=1
+                    m[29][25]=1
+                    m[29][26]=1
+                    m[30][25]=1
+                    display()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 column = pos[0] // (WIDTH + MARGIN)
