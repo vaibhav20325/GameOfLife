@@ -21,12 +21,18 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("GameOfLife")
 pygame.display.set_icon(winlogo)
 clock = pygame.time.Clock()
+
 fps=4
+
+font = pygame.font.SysFont('freesansbold.ttf', 20)
+
 
 #intro
 running=True
 screen.blit(start,(0,0))
+
 pygame.display.flip()
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
@@ -35,6 +41,8 @@ while running:
         elif event.type==pygame.QUIT:
             running=False
             quit()   
+
+
 
 def display():
     global fps
@@ -47,6 +55,11 @@ def display():
             if m[row][column] == 1:
                 color = WHITE
             pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * column + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
+    
+    text = font.render("fps:"+str(fps), True, BLACK)
+    screen.blit(text,(445,53))
+    #manual input of position
+    
     if fps<=0.5:
         fps+=1
     clock.tick(fps) 
