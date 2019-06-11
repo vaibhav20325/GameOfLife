@@ -138,6 +138,7 @@ def main():
 #intro
 screen.fill(WHITE)
 screen.blit(start,(0,0))
+pygame.time.delay(1000)
 pygame.display.flip()
 running=True
 while running:
