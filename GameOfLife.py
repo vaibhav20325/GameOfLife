@@ -28,14 +28,14 @@ font = pygame.font.SysFont('freesansbold.ttf', 20)
 
 #FUNCTIONS
 
-fps=4
+fps=5
 m=[]
 new_m=[]
 n=50
 
 def reset_game():
     global fps, new_m, m
-    fps=4
+    fps=5
     m=[]
     new_m=[]
     n=50
@@ -92,7 +92,9 @@ def check_n(x,y):
     else:
         new_m[x][y]=0
         
-
+def preset(tup):
+    for i in tup:
+        m[i[0]][i[1]]=1
 def main():    
     global m, fps, n,new_m
     
@@ -104,20 +106,10 @@ def main():
                 if event.key== pygame.K_RETURN:
                     running=False
                 if event.key== pygame.K_1:
-                    m[20][25]=1
-                    m[21][24]=1
-                    m[21][25]=1
-                    m[21][26]=1
-                    m[22][24]=1
-                    m[22][26]=1
-                    m[27][24]=1
-                    m[27][26]=1
-                    m[28][24]=1
-                    m[28][26]=1
-                    m[29][24]=1
-                    m[29][25]=1
-                    m[29][26]=1
-                    m[30][25]=1
+                    preset(((20,25),(21,24),(21,25),(21,26),(22,24),(22,26),(27,24),(27,26),(28,24),(28,26),(29,24),(29,25),(29,26),(30,25)))
+                    display()
+                if event.key== pygame.K_2:
+                    preset(((24,19),(24,22),(24,23),(24,25),(24,26),(24,27),(24,28),(24,30),(25,19),(25,20),(25,21),(25,22),(25,23),(25,24),(25,26),(25,27),(25,30)))
                     display()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
