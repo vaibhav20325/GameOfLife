@@ -16,6 +16,7 @@ WINDOW_SIZE = [501, 501]
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
 winlogo=pygame.image.load(".\winlogo.png")
+cover=pygame.image.load(".\cover.png")
 
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("GameOfLife")
@@ -43,7 +44,11 @@ def reset_game():
         for n_col in range(n):
             row_temp.append(0)
         m.append(row_temp)   
-
+    screen.fill(WHITE)
+    screen.blit(cover,(0,200))
+    pygame.display.flip()
+    pygame.time.delay(1000)
+    
 reset_game()
 
 def display():
