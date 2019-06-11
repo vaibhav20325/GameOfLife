@@ -22,30 +22,32 @@ pygame.display.set_caption("GameOfLife")
 pygame.display.set_icon(winlogo)
 clock = pygame.time.Clock()
 
-fps=4
 
 font = pygame.font.SysFont('freesansbold.ttf', 20)
 
+#FUNCTIONS
 
-#intro
-running=True
-screen.blit(start,(0,0))
+fps=4
+m=[]
+new_m=[]
+n=50
 
-pygame.display.flip()
+def reset_game():
+    global fps, new_m, m
+    fps=4
+    m=[]
+    new_m=[]
+    n=50
+    for n_rows in range(n):
+        row_temp=[]
+        for n_col in range(n):
+            row_temp.append(0)
+        m.append(row_temp)   
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key== pygame.K_RETURN:
-                running=False
-        elif event.type==pygame.QUIT:
-            running=False
-            quit()   
-
-
+reset_game()
 
 def display():
-    global fps
+    global fps, n, m
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
@@ -66,33 +68,6 @@ def display():
     pygame.display.flip()
 
 
-m=[]
-newm=[]
-n=50
-for n_rows in range(n):
-    row_temp=[]
-    for n_col in range(n):
-        row_temp.append(0)
-    m.append(row_temp)
-
-display()
-
-running=True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key== pygame.K_RETURN:
-                running=False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            column = pos[0] // (WIDTH + MARGIN)
-            row = pos[1] // (HEIGHT + MARGIN)
-            m[row][column] = 1
-            display()
-        elif event.type==pygame.QUIT:
-            running=False
-            quit()
-
 # xth row and yth column
 def check_n(x,y):
     global m
@@ -111,23 +86,62 @@ def check_n(x,y):
         new_m[x][y]=1
     else:
         new_m[x][y]=0
+        
 
+def main():    
+    global m, fps, n,new_m
+    
+    display()
+    running=True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key== pygame.K_RETURN:
+                    running=False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                column = pos[0] // (WIDTH + MARGIN)
+                row = pos[1] // (HEIGHT + MARGIN)
+                m[row][column] = 1
+                display()
+            elif event.type==pygame.QUIT:
+                running=False
+                quit()
+    
+    running=True
+    while running:
+        new_m=copy.deepcopy(m)
+        for i in range(n):
+            if 1 not in m[i-1]+m[i]+m[(i+1)%n]:
+                    continue
+            for j in range(n):
+                check_n(i,j)
+        m=new_m
+        display()
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                running=False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    fps+=0.5
+                elif event.key == pygame.K_LEFT:
+                    fps+=-0.5
+                elif event.key == pygame.K_ESCAPE:
+                    reset_game()
+                    main()
+
+#intro
+screen.fill(WHITE)
+screen.blit(start,(0,0))
+pygame.display.flip()
 running=True
 while running:
-    new_m=copy.deepcopy(m)
-    for i in range(n):
-        if 1 not in m[i-1]+m[i]+m[(i+1)%n]:
-                continue
-        for j in range(n):
-            
-            check_n(i,j)
-    m=new_m
-    display()
     for event in pygame.event.get():
-        if event.type==pygame.QUIT:
+        if event.type == pygame.KEYDOWN:
+            if event.key== pygame.K_RETURN:
+                running=False
+        elif event.type==pygame.QUIT:
             running=False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                fps+=0.5
-            elif event.key == pygame.K_LEFT:
-                fps+=-0.5
+            quit()   
+
+main()
