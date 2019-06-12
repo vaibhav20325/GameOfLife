@@ -17,6 +17,10 @@ After clicking on some boxes to make the intial setup, Press ENTER to Start.
 
 To increase the frame rate Press <kbd>→</kbd>
 To decrease the frame rate Press <kbd>←</kbd>
+Press <kbd>UP</kbd> to set the frame rate to 30
+
 To reset the initial position Press <kbd>Esc</kbd>
 
 Press <kbd>1</kbd> or <kbd>2</kbd> for a built in setup
+
+Click on glider to insert Glider
