@@ -6,12 +6,13 @@ import pygame
 BLACK = (0, 0, 0)
 GREY=(50,50,50)
 WHITE = (255, 255, 255)
+DULLW=(127,255,212)
 WIDTH = 9
 HEIGHT = 9
 MARGIN = 1
 
 pygame.init()
-WINDOW_SIZE = [501, 501]
+WINDOW_SIZE = [501, 513]
 
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
@@ -24,8 +25,8 @@ pygame.display.set_icon(winlogo)
 clock = pygame.time.Clock()
 
 
-font = pygame.font.SysFont('freesansbold.ttf', 20)
-
+font1 = pygame.font.SysFont('freesansbold.ttf', 20)
+font2 = pygame.font.SysFont('freesansbold.ttf', 14)
 #FUNCTIONS
 
 fps=5
@@ -44,6 +45,7 @@ def reset_game():
         for n_col in range(n):
             row_temp.append(0)
         m.append(row_temp)   
+    new_m=copy.deepcopy(m)
     screen.fill(WHITE)
     screen.blit(cover,(0,200))
     pygame.display.flip()
@@ -51,22 +53,26 @@ def reset_game():
     
 reset_game()
 
-def display():
-    global fps, n, m
+def display(l):
+    global fps, n, m, button1
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
     for row in range(7,n):
         for column in range(n):
             color = BLACK
-            if m[row][column] == 1:
+            if l[row][column] == 1:
                 color = WHITE
+            elif l[row][column] == 2:
+                color = DULLW
             pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * column + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
     
-    text = font.render("fps:"+str(fps), True, BLACK)
+    text = font1.render("fps:"+str(fps), True, BLACK)
     screen.blit(text,(445,53))
     #manual input of position
-    
+    button1=pygame.rect.Rect((MARGIN + WIDTH) * 0 + MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*3,WIDTH*5,HEIGHT)
+    pygame.draw.rect(screen, WHITE ,button1)
+    screen.blit(font2.render("GLIDER", True, BLACK),(MARGIN*6,(MARGIN + HEIGHT) * 50 + MARGIN*3))
     if fps<=0.5:
         fps+=1
     clock.tick(fps) 
@@ -92,13 +98,13 @@ def check_n(x,y):
     else:
         new_m[x][y]=0
         
-def preset(tup):
+def preset(tup,l=m,n=1):
     for i in tup:
-        m[i[0]][i[1]]=1
+        l[i[0]][i[1]]=n
 def main():    
-    global m, fps, n,new_m
+    global m, fps, n,new_m, button1, drag
     
-    display()
+    display(m)
     running=True
     while running:
         for event in pygame.event.get():
@@ -107,20 +113,51 @@ def main():
                     running=False
                 if event.key== pygame.K_1:
                     preset(((20,25),(21,24),(21,25),(21,26),(22,24),(22,26),(27,24),(27,26),(28,24),(28,26),(29,24),(29,25),(29,26),(30,25)))
-                    display()
+                    display(m)
                 if event.key== pygame.K_2:
                     preset(((24,19),(24,22),(24,23),(24,25),(24,26),(24,27),(24,28),(24,30),(25,19),(25,20),(25,21),(25,22),(25,23),(25,24),(25,26),(25,27),(25,30)))
-                    display()
+                    display(m)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                column = pos[0] // (WIDTH + MARGIN)
-                row = pos[1] // (HEIGHT + MARGIN)
-                m[row][column] = 1
-                display()
+                if event.button==1:
+                    pos = pygame.mouse.get_pos()
+                    column = pos[0] // (WIDTH + MARGIN)
+                    row = pos[1] // (HEIGHT + MARGIN)
+                    if row<n:
+                        m[row][column] = 1
+                        display(m)
+                    elif button1.collidepoint(event.pos):
+                        hover=True
+                        while hover:
+                            pos = pygame.mouse.get_pos()
+                            x_old = pos[0] // (WIDTH + MARGIN)
+                            y_old = pos[1] // (HEIGHT + MARGIN)
+                            for event in pygame.event.get():
+                                new_m=copy.deepcopy(m)
+                                pos = pygame.mouse.get_pos()
+                                x = pos[0] // (WIDTH + MARGIN)
+                                y = pos[1] // (HEIGHT + MARGIN)
+                                if x!=x_old or y!=y_old:
+                                    try:
+                                        preset(((y-1,x-1),(y-1,x),(y-1,x+1),(y,x-1),(y+1,x)),new_m,2)
+                                    except:
+                                        pass
+                                    display(new_m)
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if event.button==1:
+                                        pos = pygame.mouse.get_pos()
+                                        x = pos[0] // (WIDTH + MARGIN)
+                                        y = pos[1] // (HEIGHT + MARGIN)
+                                        preset(((y-1,x-1),(y-1,x),(y-1,x+1),(y,x-1),(y+1,x)))
+                                        hover=False
+                                if event.type== pygame.KEYDOWN:
+                                    if event.key== pygame.K_ESCAPE:
+                                        hover=False
+                                        break
+                        display(m)     
             elif event.type==pygame.QUIT:
                 running=False
-                quit()
-    
+                quit()        
+             
     running=True
     while running:
         new_m=copy.deepcopy(m)
@@ -130,7 +167,7 @@ def main():
             for j in range(n):
                 check_n(i,j)
         m=new_m
-        display()
+        display(m)
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 running=False
@@ -139,11 +176,15 @@ def main():
                     fps+=0.5
                 elif event.key == pygame.K_LEFT:
                     fps+=-0.5
+                #TEMP
+                elif event.key == pygame.K_UP:
+                    fps=30
                 elif event.key == pygame.K_ESCAPE:
                     reset_game()
                     main()
 
 #intro
+
 screen.fill(WHITE)
 screen.blit(start,(0,0))
 pygame.time.delay(1000)
