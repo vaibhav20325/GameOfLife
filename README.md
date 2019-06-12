@@ -23,4 +23,5 @@ To reset the initial position Press <kbd>Esc</kbd>
 
 Press <kbd>1</kbd> or <kbd>2</kbd> for a built in setup
 
-Click on glider to insert Glider
+Click on glider to insert Glider, click anywhere to insert it.
+
