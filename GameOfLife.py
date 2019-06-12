@@ -29,14 +29,14 @@ font1 = pygame.font.SysFont('freesansbold.ttf', 20)
 font2 = pygame.font.SysFont('freesansbold.ttf', 14)
 #FUNCTIONS
 
-fps=5
+fps=60
 m=[]
 new_m=[]
 n=50
 
 def reset_game():
     global fps, new_m, m
-    fps=5
+    fps=60
     m=[]
     new_m=[]
     n=50
@@ -98,7 +98,7 @@ def check_n(x,y):
     else:
         new_m[x][y]=0
         
-def preset(tup,l=m,n=1):
+def preset(tup,l,n=1):
     for i in tup:
         l[i[0]][i[1]]=n
 def main():    
@@ -112,42 +112,38 @@ def main():
                 if event.key== pygame.K_RETURN:
                     running=False
                 if event.key== pygame.K_1:
-                    preset(((20,25),(21,24),(21,25),(21,26),(22,24),(22,26),(27,24),(27,26),(28,24),(28,26),(29,24),(29,25),(29,26),(30,25)))
+                    preset(((20,25),(21,24),(21,25),(21,26),(22,24),(22,26),(27,24),(27,26),(28,24),(28,26),(29,24),(29,25),(29,26),(30,25)),m)
                     display(m)
                 if event.key== pygame.K_2:
-                    preset(((24,19),(24,22),(24,23),(24,25),(24,26),(24,27),(24,28),(24,30),(25,19),(25,20),(25,21),(25,22),(25,23),(25,24),(25,26),(25,27),(25,30)))
+                    preset(((24,19),(24,22),(24,23),(24,25),(24,26),(24,27),(24,28),(24,30),(25,19),(25,20),(25,21),(25,22),(25,23),(25,24),(25,26),(25,27),(25,30)),m)
                     display(m)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     pos = pygame.mouse.get_pos()
-                    column = pos[0] // (WIDTH + MARGIN)
                     row = pos[1] // (HEIGHT + MARGIN)
+                    column = pos[0] // (WIDTH + MARGIN)
                     if row<n:
                         m[row][column] = 1
                         display(m)
                     elif button1.collidepoint(event.pos):
                         hover=True
                         while hover:
-                            pos = pygame.mouse.get_pos()
-                            x_old = pos[0] // (WIDTH + MARGIN)
-                            y_old = pos[1] // (HEIGHT + MARGIN)
                             for event in pygame.event.get():
                                 new_m=copy.deepcopy(m)
                                 pos = pygame.mouse.get_pos()
                                 x = pos[0] // (WIDTH + MARGIN)
                                 y = pos[1] // (HEIGHT + MARGIN)
-                                if x!=x_old or y!=y_old:
-                                    try:
-                                        preset(((y-1,x-1),(y-1,x),(y-1,x+1),(y,x-1),(y+1,x)),new_m,2)
-                                    except:
-                                        pass
+                                try:
+                                    preset(((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x)),new_m,2)
                                     display(new_m)
+                                except:
+                                    pass
                                 if event.type == pygame.MOUSEBUTTONDOWN:
                                     if event.button==1:
                                         pos = pygame.mouse.get_pos()
                                         x = pos[0] // (WIDTH + MARGIN)
                                         y = pos[1] // (HEIGHT + MARGIN)
-                                        preset(((y-1,x-1),(y-1,x),(y-1,x+1),(y,x-1),(y+1,x)))
+                                        preset(((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x)),m)
                                         hover=False
                                 if event.type== pygame.KEYDOWN:
                                     if event.key== pygame.K_ESCAPE:
@@ -159,7 +155,9 @@ def main():
                 quit()        
              
     running=True
+    fps=5
     while running:
+        
         new_m=copy.deepcopy(m)
         for i in range(n):
             if 1 not in m[i-1]+m[i]+m[(i+1)%n]:
