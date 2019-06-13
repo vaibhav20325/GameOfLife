@@ -29,10 +29,20 @@ font1 = pygame.font.SysFont('freesansbold.ttf', 20)
 font2 = pygame.font.SysFont('freesansbold.ttf', 15)
 #FUNCTIONS
 
+
+
+
 fps=60
 m=[]
 new_m=[]
 n=50
+
+
+def glider(x,y):
+    return ((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x))
+
+def spaceship(x,y):
+    return ((y-1,x-1),(y,x-2),((y+1)%n,x-2),((y+2)%n,x-2),((y+2)%n,x-1),((y+2)%n,x),((y+2)%n,(x+1)%n),((y+1)%n,(x+2)%n),(y-1,(x+2)%n))
 
 def m_coordinate():
     return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN), pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
@@ -110,7 +120,7 @@ def preset(tupl,l,n=1):
     for i in tupl:
         l[i[0]][i[1]]=n
         
-def button_click(tup):
+def button_click(desn):
     global m, new_m
     hover=True
     while hover:
@@ -118,14 +128,14 @@ def button_click(tup):
             new_m=copy.deepcopy(m)
             x,y=m_coordinate()
             try:
-                preset(eval(tup),new_m,2)
+                preset(desn(x,y),new_m,2)
                 display(new_m)
             except:
                 pass
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     x,y=m_coordinate()
-                    preset(eval(tup),m)
+                    preset(desn(x,y),m)
                     hover=False
             elif event.type== pygame.KEYDOWN:
                     if event.key== pygame.K_ESCAPE:
@@ -157,10 +167,10 @@ def main():
                         m[row][column] = 1
                         display(m)
                     elif button1.collidepoint(event.pos):
-                        button_click('((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x))')
+                        button_click(glider)
                         display(m)
                     elif button2.collidepoint(event.pos):
-                        button_click('((y-1,x-1),(y,x-2),((y+1)%n,x-2),((y+2)%n,x-2),((y+2)%n,x-1),((y+2)%n,x),((y+2)%n,(x+1)%n),((y+1)%n,(x+2)%n),(y-1,(x+2)%n))')
+                        button_click(spaceship)
                         display(m)     
             elif event.type==pygame.QUIT:
                 running=False
