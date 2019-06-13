@@ -12,7 +12,7 @@ HEIGHT = 9
 MARGIN = 1
 
 pygame.init()
-WINDOW_SIZE = [501, 513]
+WINDOW_SIZE = [501, 522]
 
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
@@ -26,13 +26,16 @@ clock = pygame.time.Clock()
 
 
 font1 = pygame.font.SysFont('freesansbold.ttf', 20)
-font2 = pygame.font.SysFont('freesansbold.ttf', 14)
+font2 = pygame.font.SysFont('freesansbold.ttf', 15)
 #FUNCTIONS
 
 fps=60
 m=[]
 new_m=[]
 n=50
+
+def m_coordinate():
+    return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN), pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
 
 def reset_game():
     global fps, new_m, m
@@ -54,7 +57,7 @@ def reset_game():
 reset_game()
 
 def display(l):
-    global fps, n, m, button1
+    global fps, n, m, button1, button2
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
@@ -70,9 +73,14 @@ def display(l):
     text = font1.render("fps:"+str(fps), True, BLACK)
     screen.blit(text,(445,53))
     #manual input of position
-    button1=pygame.rect.Rect((MARGIN + WIDTH) * 0 + MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*3,WIDTH*5,HEIGHT)
+    button1=pygame.rect.Rect((MARGIN + WIDTH) * 0 + MARGIN*1,(MARGIN + HEIGHT) * 50 + MARGIN*2,WIDTH*5,HEIGHT*2)
     pygame.draw.rect(screen, WHITE ,button1)
-    screen.blit(font2.render("GLIDER", True, BLACK),(MARGIN*6,(MARGIN + HEIGHT) * 50 + MARGIN*3))
+    screen.blit(font2.render("GLIDER", True, BLACK),(MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*6))
+    
+    button2=pygame.rect.Rect((MARGIN + WIDTH) * 5 + MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*2,WIDTH*7,HEIGHT*2)
+    pygame.draw.rect(screen, WHITE ,button2)
+    screen.blit(font2.render("SPACESHIP", True, BLACK),(WIDTH*5+MARGIN*8,(MARGIN + HEIGHT) * 50 + MARGIN*6))
+    
     if fps<=0.5:
         fps+=1
     clock.tick(fps) 
@@ -98,11 +106,36 @@ def check_n(x,y):
     else:
         new_m[x][y]=0
         
-def preset(tup,l,n=1):
-    for i in tup:
+def preset(tupl,l,n=1):
+    for i in tupl:
         l[i[0]][i[1]]=n
+        
+def button_click(tup):
+    global m, new_m
+    hover=True
+    while hover:
+        for event in pygame.event.get():
+            new_m=copy.deepcopy(m)
+            x,y=m_coordinate()
+            try:
+                preset(eval(tup),new_m,2)
+                display(new_m)
+            except:
+                pass
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button==1:
+                    x,y=m_coordinate()
+                    preset(eval(tup),m)
+                    hover=False
+            elif event.type== pygame.KEYDOWN:
+                    if event.key== pygame.K_ESCAPE:
+                        hover=False
+                        break        
+
+
+
 def main():    
-    global m, fps, n,new_m, button1, drag
+    global m, fps, n,new_m, button1, button2
     
     display(m)
     running=True
@@ -119,36 +152,15 @@ def main():
                     display(m)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
-                    pos = pygame.mouse.get_pos()
-                    row = pos[1] // (HEIGHT + MARGIN)
-                    column = pos[0] // (WIDTH + MARGIN)
+                    column,row=m_coordinate()
                     if row<n:
                         m[row][column] = 1
                         display(m)
                     elif button1.collidepoint(event.pos):
-                        hover=True
-                        while hover:
-                            for event in pygame.event.get():
-                                new_m=copy.deepcopy(m)
-                                pos = pygame.mouse.get_pos()
-                                x = pos[0] // (WIDTH + MARGIN)
-                                y = pos[1] // (HEIGHT + MARGIN)
-                                try:
-                                    preset(((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x)),new_m,2)
-                                    display(new_m)
-                                except:
-                                    pass
-                                if event.type == pygame.MOUSEBUTTONDOWN:
-                                    if event.button==1:
-                                        pos = pygame.mouse.get_pos()
-                                        x = pos[0] // (WIDTH + MARGIN)
-                                        y = pos[1] // (HEIGHT + MARGIN)
-                                        preset(((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x)),m)
-                                        hover=False
-                                if event.type== pygame.KEYDOWN:
-                                    if event.key== pygame.K_ESCAPE:
-                                        hover=False
-                                        break
+                        button_click('((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x))')
+                        display(m)
+                    elif button2.collidepoint(event.pos):
+                        button_click('((y-1,x-1),(y,x-2),((y+1)%n,x-2),((y+2)%n,x-2),((y+2)%n,x-1),((y+2)%n,x),((y+2)%n,(x+1)%n),((y+1)%n,(x+2)%n),(y-1,(x+2)%n))')
                         display(m)     
             elif event.type==pygame.QUIT:
                 running=False
@@ -185,7 +197,7 @@ def main():
 
 screen.fill(WHITE)
 screen.blit(start,(0,0))
-pygame.time.delay(1000)
+pygame.time.delay(3000)
 pygame.display.flip()
 running=True
 while running:
