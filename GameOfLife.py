@@ -1,6 +1,7 @@
 #GAME OF LIFE
 import copy
 import pygame
+import module_button
 
 #Display
 BLACK = (0, 0, 0)
