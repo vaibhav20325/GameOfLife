@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jun 18 15:15:47 2019
-
-@author: RajeevKumar
-"""
-
 def new_button(file_name,x,y):
     list=[]
     f=open(file_name+'.txt','r')
