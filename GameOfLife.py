@@ -1,4 +1,5 @@
 #GAME OF LIFE
+import os
 import copy
 import pygame
 import module_button
@@ -15,9 +16,19 @@ B_WIDTH=60
 B_HEIGHT=18
 
 
+names = []
+# r=root, d=directories, f = files
+for r, d, f in os.walk('design\\'):
+    for file in f:
+        if '.txt' in file:
+            names.append(file.split('.')[0])
+
+button={}        
+
+'''
 button1,button2,button3=0,0,0
 button=[button1,button2,button3]
-names=['GLIDER','SAPCESHIP','CUSTOM']
+'''
 
 pygame.init()
 WINDOW_SIZE = [501, 542]
@@ -97,14 +108,21 @@ def display(l):
     screen.blit(text,(445,53))
     #manual input of position
     
+    for i in range(len(names)):
+        
+        coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
+        button[names[i]]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
+        pygame.draw.rect(screen, WHITE ,button[names[i]])
+        textfunc(names[i],BLACK,coord)
+    '''
     for i in range(3):
         coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
         button[i]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
         pygame.draw.rect(screen, WHITE ,button[i])
         textfunc(names[i],BLACK,coord)
+    '''
     
-    
-    coord=((B_MARGIN + B_WIDTH)* 6 + B_MARGIN*1,500 + B_MARGIN*1)
+    coord=((B_MARGIN + B_WIDTH)* 7 + B_MARGIN*1,520 + B_MARGIN*1)
     button_grid=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
     pygame.draw.rect(screen, WHITE ,button_grid)
     textfunc('GRID',BLACK,coord)
@@ -183,13 +201,7 @@ def main():
                     column,row=m_coordinate()
                     if row<n:
                         m[row][column] = 1
-
-                    elif button[0].collidepoint(event.pos):
-                        button_click(module_button.new_button,'glider')
-                    elif button[1].collidepoint(event.pos):
-                        button_click(module_button.new_button,'spaceship')
-                    elif button[2].collidepoint(event.pos):
-                        button_click(module_button.new_button,'custom')
+                    
                     elif button_grid.collidepoint(event.pos):
                         MARGIN=1-MARGIN
                         if WIDTH==9:
@@ -198,6 +210,11 @@ def main():
                         else:
                             WIDTH-=1
                             HEIGHT-=1
+                    
+                    for i in range(len(names)):
+                        if button[names[i]].collidepoint(event.pos):
+                            button_click(module_button.new_button,names[i])
+                    
                     display(m)
             elif event.type==pygame.QUIT:
                 running=False
