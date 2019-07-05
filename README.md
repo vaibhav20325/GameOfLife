@@ -4,7 +4,7 @@ By-Vaibhav Agarwal
 
 Ensure that you have the images in the same folder.
 
-**The design folder has all the designs,you can make your add your own deisgn in custom.txt or copy one from <http://www.radicaleye.com/lifepage/glossary.html>**
+**The design folder has all the designs,you can add your own deisgn in custom.txt or copy one from <http://www.radicaleye.com/lifepage/glossary.html>**
 
 At the heart of this game are four rules that determine if a cell is live or dead. All depend on how many of that cell's neighbors are alive.
 
