@@ -25,10 +25,6 @@ for r, d, f in os.walk('design\\'):
 
 button={}        
 
-'''
-button1,button2,button3=0,0,0
-button=[button1,button2,button3]
-'''
 
 pygame.init()
 WINDOW_SIZE = [501, 542]
@@ -54,11 +50,12 @@ infinite_grid=False
 fps=60
 m=[]
 new_m=[]
-n=50
 
-
+extra_size=10
+grid_size=50
+n=grid_size+2*extra_size
 def m_coordinate():
-    return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN), pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
+    return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN)+extra_size, pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
 
 def textfunc(text,textcolour, coordinate):
     textsurface=font2.render(text, True, textcolour)
@@ -68,18 +65,19 @@ def textfunc(text,textcolour, coordinate):
     
 
 def reset_game():
-    global fps, new_m, m, BLACK, WHITE
+    global fps, new_m, m, BLACK, WHITE, infinite_grid
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     fps=60
+    infinite_grid=False
     m=[]
     new_m=[]
-    n=50
     for n_rows in range(n):
         row_temp=[]
         for n_col in range(n):
             row_temp.append(0)
         m.append(row_temp)   
+
     new_m=copy.deepcopy(m)
     screen.fill(WHITE)
     screen.blit(cover,(0,200))
@@ -93,14 +91,14 @@ def display(l):
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
-    for row in range(7,n):
-        for column in range(n):
+    for row in range(7,grid_size):
+        for column in range(extra_size,grid_size+extra_size):
             color = BLACK
             if l[row][column] == 1:
                 color = WHITE
             elif l[row][column] == 2:
                 color = BLUE
-            pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * column + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
+            pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * (column-extra_size) + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
     
     text = font1.render("fps:"+str(fps), True, (0,0,0))
     # Manual Color
@@ -114,13 +112,6 @@ def display(l):
         button[names[i]]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
         pygame.draw.rect(screen, WHITE ,button[names[i]])
         textfunc(names[i],BLACK,coord)
-    '''
-    for i in range(3):
-        coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
-        button[i]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
-        pygame.draw.rect(screen, WHITE ,button[i])
-        textfunc(names[i],BLACK,coord)
-    '''
     
     coord=((B_MARGIN + B_WIDTH)* 7 + B_MARGIN*1,520 + B_MARGIN*1)
     button_grid=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
@@ -140,10 +131,7 @@ def check_n(x,y):
     global new_m
     sum_n=0
     try:
-        if not(infinite_grid):
-            sum_n=m[x-1][y]+m[(x+1)%n][y]+m[x][(y+1)%n]+m[x][y-1]+m[x-1][y-1]+m[x-1][(y+1)%n]+m[(x+1)%n][y-1]+m[(x+1)%n][(y+1)%n]
-        else:
-            sum_n=m[x-1][y]+m[x+1][y]+m[x][y+1]+m[x][y-1]+m[x-1][y-1]+m[x-1][y+1]+m[x+1][y-1]+m[x+1][y+1]
+        sum_n=m[x-1][y]+m[(x+1)%n][y]+m[x][(y+1)%n]+m[x][y-1]+m[x-1][y-1]+m[x-1][(y+1)%n]+m[(x+1)%n][y-1]+m[(x+1)%n][(y+1)%n]
     except:
         pass
     if sum_n<2:
@@ -153,8 +141,35 @@ def check_n(x,y):
     elif sum_n==3:
         new_m[x][y]=1
     else:
-        new_m[x][y]=0
-        
+        new_m[x][y]=0  
+    
+def infinite_func():
+    global new_m
+    
+    if sum(new_m[grid_size-1]+new_m[grid_size-2])==0 and infinite_grid:
+        for i in range(extra_size*2):
+            new_m[grid_size+i]=[0]*n
+    if sum(new_m[7]+new_m[8])==0 and infinite_grid:
+        for i in range(7):
+            new_m[i]=[0]*n
+    for i in range(7,7+grid_size):
+        if new_m[i][extra_size]==0 and new_m[i][extra_size+1]==0:
+            pass
+        else:
+            break
+    else:
+        for i in range(7,7+grid_size):
+            for j in range(extra_size):
+                new_m[i][j]=0
+    for i in range(7,7+grid_size):
+        if new_m[i][grid_size+extra_size-2]==0 and new_m[i][grid_size+extra_size-1]==0:
+            pass
+        else:
+            break
+    else:
+        for i in range(7,7+grid_size):
+            for j in range(grid_size+extra_size,n):
+                new_m[i][j]=0
 def preset(tupl,l,n=1):
     for i in tupl:
         l[i[0]][i[1]]=n
@@ -190,16 +205,19 @@ def main():
     running=True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
+            if event.type==pygame.QUIT:
+                running=False
+                quit()
+            elif event.type == pygame.KEYDOWN:
                 if event.key== pygame.K_RETURN:
                     running=False
                 if event.key== pygame.K_q:
                     infinite_grid=True
-                    display(m)
+                    pass
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     column,row=m_coordinate()
-                    if row<n:
+                    if row<grid_size:
                         m[row][column] = 1
                     
                     elif button_grid.collidepoint(event.pos):
@@ -216,9 +234,7 @@ def main():
                             button_click(module_button.new_button,names[i])
                     
                     display(m)
-            elif event.type==pygame.QUIT:
-                running=False
-                quit()        
+                    
              
     running=True
     fps=5
@@ -230,6 +246,8 @@ def main():
                     continue
             for j in range(n):
                 check_n(i,j)
+        if infinite_grid:
+            infinite_func()
         m=new_m
         display(m)
         for event in pygame.event.get():
@@ -274,3 +292,4 @@ while running:
             quit()   
 '''
 main()
+
