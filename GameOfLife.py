@@ -2,18 +2,25 @@
 import copy
 import pygame
 import module_button
-
 #Display
 BLACK = (0, 0, 0)
 GREY=(50,50,50)
 WHITE = (255, 255, 255)
-DULLW=(127,255,212)
+BLUE=(127,255,212)
 WIDTH = 9
 HEIGHT = 9
 MARGIN = 1
+B_MARGIN=2
+B_WIDTH=60
+B_HEIGHT=18
+
+
+button1,button2,button3=0,0,0
+button=[button1,button2,button3]
+names=['GLIDER','SAPCESHIP','CUSTOM']
 
 pygame.init()
-WINDOW_SIZE = [501, 522]
+WINDOW_SIZE = [501, 542]
 
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
@@ -27,29 +34,32 @@ clock = pygame.time.Clock()
 
 
 font1 = pygame.font.SysFont('freesansbold.ttf', 20)
-font2 = pygame.font.SysFont('freesansbold.ttf', 15)
+font2 = pygame.font.SysFont('freesansbold.ttf', 16)
 #FUNCTIONS
 
 
 
-
+infinite_grid=False
 fps=60
 m=[]
 new_m=[]
 n=50
 
 
-def glider(x,y):
-    return ((y-1,x-1),(y-1,x),(y-1,(x+1)%n),(y,x-1),((y+1)%n,x))
-
-def spaceship(x,y):
-    return ((y-1,x-1),(y,x-2),((y+1)%n,x-2),((y+2)%n,x-2),((y+2)%n,x-1),((y+2)%n,x),((y+2)%n,(x+1)%n),((y+1)%n,(x+2)%n),(y-1,(x+2)%n))
-
 def m_coordinate():
     return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN), pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
 
+def textfunc(text,textcolour, coordinate):
+    textsurface=font2.render(text, True, textcolour)
+    textrect=textsurface.get_rect()
+    textrect.center=(coordinate[0]+B_WIDTH/2,coordinate[1]+B_HEIGHT/2)
+    screen.blit(textsurface,textrect)
+    
+
 def reset_game():
-    global fps, new_m, m
+    global fps, new_m, m, BLACK, WHITE
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
     fps=60
     m=[]
     new_m=[]
@@ -68,7 +78,7 @@ def reset_game():
 reset_game()
 
 def display(l):
-    global fps, n, m, button1, button2
+    global fps, n, m, button, button_grid, B_COLOUR
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
@@ -78,19 +88,27 @@ def display(l):
             if l[row][column] == 1:
                 color = WHITE
             elif l[row][column] == 2:
-                color = DULLW
+                color = BLUE
             pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * column + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
     
-    text = font1.render("fps:"+str(fps), True, BLACK)
+    text = font1.render("fps:"+str(fps), True, (0,0,0))
+    # Manual Color
+    
     screen.blit(text,(445,53))
     #manual input of position
-    button1=pygame.rect.Rect((MARGIN + WIDTH) * 0 + MARGIN*1,(MARGIN + HEIGHT) * 50 + MARGIN*2,WIDTH*5,HEIGHT*2)
-    pygame.draw.rect(screen, WHITE ,button1)
-    screen.blit(font2.render("GLIDER", True, BLACK),(MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*6))
     
-    button2=pygame.rect.Rect((MARGIN + WIDTH) * 5 + MARGIN*3,(MARGIN + HEIGHT) * 50 + MARGIN*2,WIDTH*7,HEIGHT*2)
-    pygame.draw.rect(screen, WHITE ,button2)
-    screen.blit(font2.render("SPACESHIP", True, BLACK),(WIDTH*5+MARGIN*8,(MARGIN + HEIGHT) * 50 + MARGIN*6))
+    for i in range(3):
+        coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
+        button[i]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
+        pygame.draw.rect(screen, WHITE ,button[i])
+        textfunc(names[i],BLACK,coord)
+    
+    
+    coord=((B_MARGIN + B_WIDTH)* 6 + B_MARGIN*1,500 + B_MARGIN*1)
+    button_grid=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
+    pygame.draw.rect(screen, WHITE ,button_grid)
+    textfunc('GRID',BLACK,coord)
+    
     
     if fps<=0.5:
         fps+=1
@@ -104,10 +122,12 @@ def check_n(x,y):
     global new_m
     sum_n=0
     try:
-        sum_n=m[x-1][y]+m[(x+1)%n][y]+m[x][(y+1)%n]+m[x][y-1]+m[x-1][y-1]+m[x-1][(y+1)%n]+m[(x+1)%n][y-1]+m[(x+1)%n][(y+1)%n]
+        if not(infinite_grid):
+            sum_n=m[x-1][y]+m[(x+1)%n][y]+m[x][(y+1)%n]+m[x][y-1]+m[x-1][y-1]+m[x-1][(y+1)%n]+m[(x+1)%n][y-1]+m[(x+1)%n][(y+1)%n]
+        else:
+            sum_n=m[x-1][y]+m[x+1][y]+m[x][y+1]+m[x][y-1]+m[x-1][y-1]+m[x-1][y+1]+m[x+1][y-1]+m[x+1][y+1]
     except:
-        sum_n=0
-
+        pass
     if sum_n<2:
         new_m[x][y]=0
     elif sum_n==2 and m[x][y]:
@@ -121,7 +141,7 @@ def preset(tupl,l,n=1):
     for i in tupl:
         l[i[0]][i[1]]=n
         
-def button_click(desn):
+def button_click(desn,file_name):
     global m, new_m
     hover=True
     while hover:
@@ -129,14 +149,14 @@ def button_click(desn):
             new_m=copy.deepcopy(m)
             x,y=m_coordinate()
             try:
-                preset(desn(x,y),new_m,2)
+                preset(desn(file_name,x,y),new_m,2)
                 display(new_m)
             except:
                 pass
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     x,y=m_coordinate()
-                    preset(desn(x,y),m)
+                    preset(desn(file_name,x,y),m)
                     hover=False
             elif event.type== pygame.KEYDOWN:
                     if event.key== pygame.K_ESCAPE:
@@ -146,7 +166,7 @@ def button_click(desn):
 
 
 def main():    
-    global m, fps, n,new_m, button1, button2
+    global m, fps, n,new_m, WIDTH, HEIGHT, MARGIN, infinite_grid, WHITE, BLACK
     
     display(m)
     running=True
@@ -155,24 +175,30 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key== pygame.K_RETURN:
                     running=False
-                if event.key== pygame.K_1:
-                    preset(((20,25),(21,24),(21,25),(21,26),(22,24),(22,26),(27,24),(27,26),(28,24),(28,26),(29,24),(29,25),(29,26),(30,25)),m)
-                    display(m)
-                if event.key== pygame.K_2:
-                    preset(((24,19),(24,22),(24,23),(24,25),(24,26),(24,27),(24,28),(24,30),(25,19),(25,20),(25,21),(25,22),(25,23),(25,24),(25,26),(25,27),(25,30)),m)
+                if event.key== pygame.K_q:
+                    infinite_grid=True
                     display(m)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     column,row=m_coordinate()
                     if row<n:
                         m[row][column] = 1
-                        display(m)
-                    elif button1.collidepoint(event.pos):
-                        button_click(glider)
-                        display(m)
-                    elif button2.collidepoint(event.pos):
-                        button_click(spaceship)
-                        display(m)     
+
+                    elif button[0].collidepoint(event.pos):
+                        button_click(module_button.new_button,'glider')
+                    elif button[1].collidepoint(event.pos):
+                        button_click(module_button.new_button,'spaceship')
+                    elif button[2].collidepoint(event.pos):
+                        button_click(module_button.new_button,'custom')
+                    elif button_grid.collidepoint(event.pos):
+                        MARGIN=1-MARGIN
+                        if WIDTH==9:
+                            WIDTH+=1
+                            HEIGHT+=1
+                        else:
+                            WIDTH-=1
+                            HEIGHT-=1
+                    display(m)
             elif event.type==pygame.QUIT:
                 running=False
                 quit()        
@@ -180,7 +206,7 @@ def main():
     running=True
     fps=5
     while running:
-        
+
         new_m=copy.deepcopy(m)
         for i in range(n):
             if 1 not in m[i-1]+m[i]+m[(i+1)%n]:
@@ -197,18 +223,28 @@ def main():
                     fps+=0.5
                 elif event.key == pygame.K_LEFT:
                     fps+=-0.5
-                #TEMP
                 elif event.key == pygame.K_UP:
                     fps=30
                 elif event.key == pygame.K_ESCAPE:
                     reset_game()
                     main()
+                elif event.key == pygame.K_g:
+                    MARGIN=1-MARGIN
+                    if WIDTH==9:
+                        WIDTH+=1
+                        HEIGHT+=1
+                    else:
+                        WIDTH-=1
+                        HEIGHT-=1
+                elif event.key == pygame.K_c:
+                    BLACK,WHITE=WHITE,BLACK
+                    
 
 #intro
-
+'''
 screen.fill(WHITE)
 screen.blit(start,(0,0))
-pygame.time.delay(1000)
+pygame.time.delay(3000)
 pygame.display.flip()
 running=True
 while running:
@@ -219,5 +255,5 @@ while running:
         elif event.type==pygame.QUIT:
             running=False
             quit()   
-
+'''
 main()
