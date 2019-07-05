@@ -1,6 +1,6 @@
 def new_button(file_name,x,y):
     list=[]
-    f=open(file_name+'.txt','r')
+    f=open('design\\'+ file_name+'.txt','r')
     text=f.readlines()
     l=int(len(text[0].strip()))
     b=int(len(text))
