@@ -23,6 +23,7 @@ Press <kbd>UP</kbd> to set the frame rate to 30
 
 To reset the initial position Press <kbd>Esc</kbd>
 
-Press <kbd>g</kbd> to hide or show grid or <kbd>c</kbd> to change colour
+**Press <kbd>g</kbd> to hide or show grid or <kbd>c</kbd> to change colour**
 
+**Press <kbd>q</kbd> on the first page to enable infinite grid**
 
