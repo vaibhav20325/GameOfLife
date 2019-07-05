@@ -23,7 +23,6 @@ Press <kbd>UP</kbd> to set the frame rate to 30
 
 To reset the initial position Press <kbd>Esc</kbd>
 
-Press <kbd>1</kbd> or <kbd>2</kbd> for a built in setup
+Press <kbd>g</kbd> to hide or show grid or <kbd>c</kbd> to change colour
 
-Click on glider to insert Glider, click anywhere to insert it.
 
