@@ -51,6 +51,7 @@ fps=60
 m=[]
 new_m=[]
 
+
 extra_size=10
 grid_size=50
 n=grid_size+2*extra_size
@@ -107,8 +108,10 @@ def display(l):
     #manual input of position
     
     for i in range(len(names)):
-        
-        coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
+        if i<=7:
+            coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
+        else:
+            coord=((B_MARGIN + B_WIDTH)* (i-8) + B_MARGIN*1,500 + B_HEIGHT + B_MARGIN*2)
         button[names[i]]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
         pygame.draw.rect(screen, WHITE ,button[names[i]])
         textfunc(names[i],BLACK,coord)
@@ -263,16 +266,19 @@ def main():
                 elif event.key == pygame.K_ESCAPE:
                     reset_game()
                     main()
-                elif event.key == pygame.K_g:
-                    MARGIN=1-MARGIN
-                    if WIDTH==9:
-                        WIDTH+=1
-                        HEIGHT+=1
-                    else:
-                        WIDTH-=1
-                        HEIGHT-=1
                 elif event.key == pygame.K_c:
                     BLACK,WHITE=WHITE,BLACK
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button==1:
+                    if button_grid.collidepoint(event.pos):
+                        MARGIN=1-MARGIN
+                        if WIDTH==9:
+                            WIDTH+=1
+                            HEIGHT+=1
+                        else:
+                            WIDTH-=1
+                            HEIGHT-=1
+                    
                     
 
 #intro
@@ -292,4 +298,5 @@ while running:
             quit()   
 '''
 main()
+
 
