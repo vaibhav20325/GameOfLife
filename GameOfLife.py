@@ -24,7 +24,7 @@ for r, d, f in os.walk('design\\'):
             names.append(file.split('.')[0])
 
 button={}        
-
+b_color=[]
 
 pygame.init()
 WINDOW_SIZE = [501, 542]
@@ -66,13 +66,14 @@ def textfunc(text,textcolour, coordinate):
     
 
 def reset_game():
-    global fps, new_m, m, BLACK, WHITE, infinite_grid
+    global fps, new_m, m, BLACK, WHITE, infinite_grid, b_color
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     fps=60
     infinite_grid=False
     m=[]
     new_m=[]
+    b_color=[WHITE]*len(names)
     for n_rows in range(n):
         row_temp=[]
         for n_col in range(n):
@@ -88,7 +89,7 @@ def reset_game():
 reset_game()
 
 def display(l):
-    global fps, n, m, button, button_grid, B_COLOUR
+    global fps, n, m, button, button_grid, b_color
     screen.fill(GREY)
     screen.blit(logo,(0,0))
     
@@ -113,7 +114,7 @@ def display(l):
         else:
             coord=((B_MARGIN + B_WIDTH)* (i-8) + B_MARGIN*1,500 + B_HEIGHT + B_MARGIN*2)
         button[names[i]]=pygame.rect.Rect(coord[0],coord[1],B_WIDTH,B_HEIGHT)
-        pygame.draw.rect(screen, WHITE ,button[names[i]])
+        pygame.draw.rect(screen, b_color[i] ,button[names[i]])
         textfunc(names[i],BLACK,coord)
     
     coord=((B_MARGIN + B_WIDTH)* 7 + B_MARGIN*1,520 + B_MARGIN*1)
@@ -126,7 +127,7 @@ def display(l):
         fps+=1
     clock.tick(fps) 
     pygame.display.flip()
-
+    b_color=[WHITE]*len(names)
 
 # xth row and yth column
 def check_n(x,y):
@@ -235,8 +236,12 @@ def main():
                     for i in range(len(names)):
                         if button[names[i]].collidepoint(event.pos):
                             button_click(module_button.new_button,names[i])
-                    
-                    display(m)
+            display(m)
+            for i in range(len(names)):
+                        if button[names[i]].collidepoint(pygame.mouse.get_pos()):
+                            b_color[i]=BLUE
+                        else:
+                            b_color[i]=WHITE
                     
              
     running=True
@@ -298,5 +303,4 @@ while running:
             quit()   
 '''
 main()
-
 
