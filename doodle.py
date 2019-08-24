@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul  8 19:47:02 2019
-
-@author: RajeevKumar
-"""
 import pygame
 import time
 import random
@@ -141,9 +135,7 @@ class character(pygame.sprite.Sprite):
             self.pos.y = land.rect.top
             self.vel.y = 0
         '''
- '''
- EDIT THIS LATER
- '''
+
         for i in platforms:
             if self.rect.colliderect(i.rect):
                     if self.rect.midtop[1] == i.rect.bottom:
