@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul  8 19:47:02 2019
 
-@author: RajeevKumar
-"""
 import pygame
 import time
 vector = pygame.math.Vector2
@@ -22,9 +17,9 @@ WINDOW_SIZE = [WIDTH, HEIGHT]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Menu")
 
-char_right=pygame.transform.scale(pygame.image.load(".\\char_right.png"),(50,50))
-char_left=pygame.transform.scale(pygame.image.load(".\\char_left.png"),(50,50))
-char_up=pygame.transform.scale(pygame.image.load(".\\char_up.png"),(50,55))
+#char_right=pygame.transform.scale(pygame.image.load(".\\char_right.png"),(50,50))
+#char_left=pygame.transform.scale(pygame.image.load(".\\char_left.png"),(50,50))
+#char_up=pygame.transform.scale(pygame.image.load(".\\char_up.png"),(50,55))
 
 friction = -0.05
 acceleration = 1
@@ -102,14 +97,11 @@ class character(pygame.sprite.Sprite):
             self.pos.x = WIDTH
 
         
-        if pygame.sprite.spritecollide(self, land,False):
-            self.pos.y = land.rect.top
-            self.vel.y = 0
-        '''
+        
         if self.rect.colliderect(land.rect):
             self.pos.y = land.rect.top
             self.vel.y = 0
-        '''
+        
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 land = Platform(0,HEIGHT-40,WIDTH,40)
