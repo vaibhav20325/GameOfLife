@@ -272,7 +272,18 @@ def main():
                     reset_game()
                     main()
                 elif event.key == pygame.K_c:
-                    BLACK,WHITE=WHITE,BLACK
+                    if BLACK[0]>WHITE[0]:
+                        change=5
+                    else:
+                        change=-5
+                    old_fps=fps
+                    fps=60
+                    for i in range (51):
+                        BLACK = ((BLACK[0]-change),)*3
+                        WHITE = ((WHITE[0]+change),)*3
+                        display(m)
+                    fps=old_fps
+                    
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     if button_grid.collidepoint(event.pos):
