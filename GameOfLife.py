@@ -4,13 +4,16 @@ import copy
 import pygame
 import module_button
 #Display
+#Colors
 BLACK = (0, 0, 0)
 GREY=(50,50,50)
 WHITE = (255, 255, 255)
 BLUE=(127,255,212)
+#Box Dimensions
 WIDTH = 9
 HEIGHT = 9
 MARGIN = 1
+#Button Dimensions
 B_MARGIN=2
 B_WIDTH=60
 B_HEIGHT=18
@@ -50,7 +53,6 @@ infinite_grid=False
 fps=60
 m=[]
 new_m=[]
-
 
 extra_size=10
 grid_size=50
@@ -100,7 +102,7 @@ def display(l):
                 color = WHITE
             elif l[row][column] == 2:
                 color = BLUE
-            pygame.draw.rect(screen,color,[(MARGIN + WIDTH) * (column-extra_size) + MARGIN,(MARGIN + HEIGHT) * row + MARGIN,WIDTH,HEIGHT])
+            pygame.draw.rect(screen,color,[(MARGIN + WIDTH)*(column-extra_size)+MARGIN,(MARGIN + HEIGHT)*row+MARGIN,WIDTH,HEIGHT])
     
     text = font1.render("fps:"+str(fps), True, (0,0,0))
     # Manual Color
@@ -179,27 +181,37 @@ def preset(tupl,l,n=1):
         l[i[0]][i[1]]=n
         
 def button_click(desn,file_name):
-    global m, new_m
+    global m, new_m,inv
     hover=True
+    inv=[False,False,False]
     while hover:
         for event in pygame.event.get():
             new_m=copy.deepcopy(m)
             x,y=m_coordinate()
+            
             try:
-                preset(desn(file_name,x,y),new_m,2)
+                preset(desn(file_name,x,y,inverse=inv),new_m,2)
                 display(new_m)
             except:
                 pass
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
                     x,y=m_coordinate()
-                    preset(desn(file_name,x,y),m)
+                    preset(desn(file_name,x,y,inverse=inv),m)
+                    inv=[False,False, False]
                     hover=False
             elif event.type== pygame.KEYDOWN:
                     if event.key== pygame.K_ESCAPE:
                         hover=False
-                        break        
-
+                        break  
+                    if event.key== pygame.K_RIGHT:
+                        inv[2]= not(inv[2])
+                    if event.key== pygame.K_LEFT:
+                        inv[0]= not(inv[0])    
+                    if event.key== pygame.K_UP:
+                        inv[1]= False
+                    if event.key== pygame.K_DOWN:
+                        inv[1]= True
 
 
 def main():    
