@@ -1,4 +1,6 @@
-def new_button(file_name,x,y):
+
+def new_button(file_name,x,y,inverse=[False, False, False]):
+    #inverse=(x_inv, y_inv, rot_inv)
     list=[]
     f=open('design\\'+ file_name+'.txt','r')
     text=f.readlines()
@@ -12,6 +14,12 @@ def new_button(file_name,x,y):
     
     for i in range(b):
         for j in range(l):
-           if text[i][j]=='*':
-               list.append((y+i-centre_y,x+j-centre_x))
+            if text[i][j]=='*':
+                pos=[j-centre_x,i-centre_y]
+                if inverse[2]:
+                    pos=pos[::-1]
+                for k in [0,1]:
+                    if not(inverse[k]):
+                        pos[k]=-1*pos[k]
+                list.append((y+pos[1],x+pos[0]))
     return(list)
