@@ -104,10 +104,13 @@ def display(l):
                 color = BLUE
             pygame.draw.rect(screen,color,[(MARGIN + WIDTH)*(column-extra_size)+MARGIN,(MARGIN + HEIGHT)*row+MARGIN,WIDTH,HEIGHT])
     
-    text = font1.render("fps:"+str(fps), True, (0,0,0))
+    text = font1.render("fps", True, (0,0,0))
     # Manual Color
-    
-    screen.blit(text,(445,53))
+    fps_bar_back=pygame.rect.Rect(434,53,64,10)
+    fps_bar=pygame.rect.Rect(436,55,fps,6)
+    pygame.draw.rect(screen, (0,0,0) ,fps_bar_back)
+    pygame.draw.rect(screen, BLUE ,fps_bar)
+    screen.blit(text,(411,52))
     #manual input of position
     
     for i in range(len(names)):
@@ -127,6 +130,8 @@ def display(l):
     
     if fps<=0.5:
         fps+=1
+    if fps>60:
+        fps=60
     clock.tick(fps) 
     pygame.display.flip()
     b_color=[WHITE]*len(names)
@@ -270,15 +275,19 @@ def main():
             infinite_func()
         m=new_m
         display(m)
+        
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_RIGHT]:
+            fps+=0.5
+        if keystate[pygame.K_LEFT]:
+            fps-=0.5
+
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 running=False
+            
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    fps+=0.5
-                elif event.key == pygame.K_LEFT:
-                    fps+=-0.5
-                elif event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     fps=30
                 elif event.key == pygame.K_ESCAPE:
                     reset_game()
