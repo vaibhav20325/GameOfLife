@@ -4,7 +4,7 @@ import random
 vector = pygame.math.Vector2
 
 BLACK = (0, 0, 0)
-GREEN= (0,110,0)
+GREEN= (0,150,0)
 WHITE = (255, 255, 255)
 BLUE=(0,0,30)
 YELLOW=(255,255,0)
@@ -12,6 +12,7 @@ YELLOW=(255,255,0)
 #winlogo=pygame.image.load(".\\char_left.png")
 #char = pygame.transform.scale(char, (50, 50))
 pygame.init()
+font1 = pygame.font.SysFont('freesansbold.ttf', 19)
 pygame.mixer.init()
 WIDTH=500
 HEIGHT=500
@@ -27,7 +28,6 @@ pygame.display.set_caption("Menu")
 friction = -0.05
 acceleration = 1
 gravity = 1
-
 clock = pygame.time.Clock()
 
 def display():
@@ -39,6 +39,15 @@ def display():
     all_sprites.draw(screen)
     platforms.draw(screen)
     flakes.draw(screen)
+
+    text = font1.render("Health", True, WHITE)
+    # Manual Color
+    health_bar_back=pygame.rect.Rect(434,10,64,10)
+    health_bar=pygame.rect.Rect(436,12,doodle.health,6)
+    pygame.draw.rect(screen, WHITE ,health_bar_back)
+    pygame.draw.rect(screen, GREEN ,health_bar)
+    screen.blit(text,(393,10))
+
     pygame.display.flip()
 
 class Platform(pygame.sprite.Sprite):
@@ -85,6 +94,7 @@ class character(pygame.sprite.Sprite):
         self.pos = vector(250,250)
         self.vel = vector(0,0)
         self.acc = vector(0,0)
+        self.health=60
 
     def update(self):
         #self.image = char_up.convert()
@@ -110,6 +120,10 @@ class character(pygame.sprite.Sprite):
         if keystate[pygame.K_UP] or keystate[pygame.K_w]:
             if self.vel.y in (-3,0):
                 self.vel.y += -30
+        if keystate[pygame.K_DOWN] or keystate[pygame.K_s]:
+            self.pos.y += 10
+        if keystate[pygame.K_h]:
+            self.health+=2
             
         '''
             while not(self.rect.colliderect(land)) or i<10:
@@ -120,6 +134,8 @@ class character(pygame.sprite.Sprite):
                 display()
                 self.speedy += (5 - (i*0.5))
         '''   
+        
+
         self.acc += self.vel * friction
         self.vel += self.acc
         self.pos += self.vel + 0.5*self.acc
@@ -131,11 +147,21 @@ class character(pygame.sprite.Sprite):
             self.pos.x = WIDTH
 
         '''
+        hit = pygame.sprite.spritecollide(self, platforms, False)
+        if hit:
+            self.vel.y = 0
+
+        '''
+        '''
         if pygame.sprite.spritecollide(self, land,False):
             self.pos.y = land.rect.top
             self.vel.y = 0
         '''
-
+        
+        for i in flakes:
+            if self.rect.colliderect(i.rect):
+                self.health-=1
+                i.rect.y=0
         for i in platforms:
             if self.rect.colliderect(i.rect):
                     if self.rect.midtop[1] == i.rect.bottom:
@@ -143,7 +169,7 @@ class character(pygame.sprite.Sprite):
                     else:
                         self.pos.y = i.rect.top
                         self.vel.y = 0
-
+        
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 flakes = pygame.sprite.Group()
