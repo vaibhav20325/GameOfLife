@@ -29,9 +29,10 @@ friction = -0.05
 acceleration = 1
 gravity = 1
 clock = pygame.time.Clock()
+game_time=0
 
 def display():
-
+    global game_time
     screen.fill(BLUE)
     #screen.blit(char,(coord_x,coord_y))
     clock.tick(30) 
@@ -40,13 +41,17 @@ def display():
     platforms.draw(screen)
     flakes.draw(screen)
 
-    text = font1.render("Health", True, WHITE)
-    # Manual Color
+    text1 = font1.render("Health", True, WHITE)
+
     health_bar_back=pygame.rect.Rect(434,10,64,10)
     health_bar=pygame.rect.Rect(436,12,doodle.health,6)
     pygame.draw.rect(screen, WHITE ,health_bar_back)
     pygame.draw.rect(screen, GREEN ,health_bar)
-    screen.blit(text,(393,10))
+    screen.blit(text1,(393,10))
+    game_time+=1/30
+    text2 = font1.render("Time:"+str(int(game_time)), True, WHITE)
+    
+    screen.blit(text2,(393,25))
 
     pygame.display.flip()
 
@@ -160,8 +165,16 @@ class character(pygame.sprite.Sprite):
         
         for i in flakes:
             if self.rect.colliderect(i.rect):
-                self.health-=1
+                self.health-=1.5
                 i.rect.y=0
+                if self.health<=0:
+                    running=False
+                    print(game_time)
+                    screen.fill(WHITE)
+                    
+                    pygame.display.flip()
+                    pygame.time.delay(2000)
+                    quit()
         for i in platforms:
             if self.rect.colliderect(i.rect):
                     if self.rect.midtop[1] == i.rect.bottom:
@@ -200,5 +213,6 @@ while running:
             quit()
     all_sprites.update()
     flakes.update()
+
     display()
         
