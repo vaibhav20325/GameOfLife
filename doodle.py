@@ -4,11 +4,11 @@ import random
 vector = pygame.math.Vector2
 
 BLACK = (0, 0, 0)
-GREEN= (0,150,0)
+GREEN= (20,150,100)
 WHITE = (255, 255, 255)
 BLUE=(0,0,30)
 YELLOW=(255,255,0)
-
+RED=(250,0,10)
 #winlogo=pygame.image.load(".\\char_left.png")
 #char = pygame.transform.scale(char, (50, 50))
 pygame.init()
@@ -20,17 +20,18 @@ WINDOW_SIZE = [WIDTH, HEIGHT]
 screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Menu")
 #pygame.display.set_icon(winlogo)
-
+snow_img=pygame.transform.scale(pygame.image.load(".\\snow.png"),(15,15))
 #char_right=pygame.transform.scale(pygame.image.load(".\\char_right.png"),(50,50))
 #char_left=pygame.transform.scale(pygame.image.load(".\\char_left.png"),(50,50))
 #char_up=pygame.transform.scale(pygame.image.load(".\\char_up.png"),(50,55))
-
+counter={'health':0}
 friction = -0.05
 acceleration = 1
 gravity = 1
 clock = pygame.time.Clock()
 game_time=0
-
+hit=False
+hit_time=0
 def display():
     global game_time
     screen.fill(BLUE)
@@ -40,6 +41,9 @@ def display():
     all_sprites.draw(screen)
     platforms.draw(screen)
     flakes.draw(screen)
+    if power_up[0].visible:
+        shields.draw(screen)
+
 
     text1 = font1.render("Health", True, WHITE)
 
@@ -83,17 +87,44 @@ class Flakes(pygame.sprite.Sprite):
             self.rect.x +=500
         if self.rect.y <3:
             self.rect.y +=500
-        '''
-        if self.rect.colliderect(land.rect):
-            self.rect.y = land.rect.top
-        '''
+
+class Shield(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        #self.image = pygame.Surface((7,7))
+        self.image=snow_img.convert()
+        self.image.set_colorkey(WHITE)
+        #self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.visible=True
+        self.hit_time=0
+    def update(self):
+        if int(game_time-self.hit_time)%5==0 or game_time<10:
+            self.visible=False
+            self.rect.y=random.randrange(0,300,30)
+            self.rect.x=random.randrange(0,500,30)
+        elif game_time-self.hit_time>0.5:
+            self.visible=True    
+    '''        
+        self.rect.x+=random.randrange(-5,5)*random.random()
+        self.rect.y+=5*random.random()
+        if self.rect.x > WIDTH:
+            self.rect.x -=500
+        if self.rect.y > HEIGHT:
+            self.rect.y -=500
+        if self.rect.x <3:
+            self.rect.x +=500
+        if self.rect.y <3:
+            self.rect.y +=500
+    '''
 class character(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         #self.image = char_up.convert()
         #self.image.set_colorkey(BLACK)
         self.image = pygame.Surface((20,30))
-        self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
         self.rect.bottom=400
         self.pos = vector(250,250)
@@ -102,6 +133,13 @@ class character(pygame.sprite.Sprite):
         self.health=60
 
     def update(self):
+        global hit
+        if hit:
+            self.image.fill(RED)    
+        else:
+            self.image.fill(YELLOW)
+
+        
         #self.image = char_up.convert()
         #self.image.set_colorkey(WHITE)
         self.acc = vector(0,gravity)
@@ -163,18 +201,37 @@ class character(pygame.sprite.Sprite):
             self.vel.y = 0
         '''
         
+        global hit_time
         for i in flakes:
             if self.rect.colliderect(i.rect):
                 self.health-=1.5
+                hit=True
+                hit_time=game_time
                 i.rect.y=0
                 if self.health<=0:
                     running=False
                     print(game_time)
+                    print(counter)
+                    print('YOUR SCORE:',counter['health']*10+int(game_time))
                     screen.fill(WHITE)
                     
                     pygame.display.flip()
                     pygame.time.delay(2000)
                     quit()
+
+        if game_time-hit_time>0.3:        
+            hit=False
+        for i in shields:
+            if self.rect.colliderect(i.rect):
+                if i.visible:
+                    i.hit_time=game_time
+                    i.visible=False
+                    self.health+=10
+                    counter['health']+=1
+                    i.rect.y=random.randrange(0,300,10)
+                    i.rect.x=random.randrange(0,500,10)
+                if self.health>60:
+                    self.health=60
         for i in platforms:
             if self.rect.colliderect(i.rect):
                     if self.rect.midtop[1] == i.rect.bottom:
@@ -182,23 +239,29 @@ class character(pygame.sprite.Sprite):
                     else:
                         self.pos.y = i.rect.top
                         self.vel.y = 0
+
         
 all_sprites = pygame.sprite.Group()
 platforms = pygame.sprite.Group()
 flakes = pygame.sprite.Group()
+shields = pygame.sprite.Group()
 
 snow={}
 
 for i in range (100):
-    snow[i]=Flakes(random.randrange(0,500),random.randrange(0,450))
+    snow[i]=Flakes(random.randrange(0,500,5),random.randrange(0,450,5))
     flakes.add(snow[i])
 land = Platform(0,HEIGHT-40,WIDTH,40)
 levels={}
-for i in range (15):
-    levels[i]=Platform(random.randrange(0,450),random.randrange(50,450),random.randrange(50,80),random.randrange(5,10))
+for i in range (12):
+    
+    levels[i]=Platform(random.randrange(0,450,40),random.randrange(50,450,30),random.randrange(50,80),6)
     platforms.add(levels[i])
 
-
+power_up={}
+for i in range (1):
+    power_up[i]=Shield(random.randrange(0,500),random.randrange(0,450))
+    shields.add(power_up[i])
 
 platforms.add(land)
 
@@ -213,6 +276,6 @@ while running:
             quit()
     all_sprites.update()
     flakes.update()
-
+    shields.update()
     display()
         
