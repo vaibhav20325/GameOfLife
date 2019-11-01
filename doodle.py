@@ -13,6 +13,7 @@ RED=(250,0,10)
 #char = pygame.transform.scale(char, (50, 50))
 pygame.init()
 font1 = pygame.font.SysFont('freesansbold.ttf', 19)
+font2 = pygame.font.SysFont('freesansbold.ttf', 40)
 pygame.mixer.init()
 WIDTH=500
 HEIGHT=500
@@ -21,6 +22,7 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("Menu")
 #pygame.display.set_icon(winlogo)
 snow_img=pygame.transform.scale(pygame.image.load(".\\snow.png"),(15,15))
+level_img=pygame.transform.scale(pygame.image.load(".\\level.png"),(70,8))
 #char_right=pygame.transform.scale(pygame.image.load(".\\char_right.png"),(50,50))
 #char_left=pygame.transform.scale(pygame.image.load(".\\char_left.png"),(50,50))
 #char_up=pygame.transform.scale(pygame.image.load(".\\char_up.png"),(50,55))
@@ -60,10 +62,13 @@ def display():
     pygame.display.flip()
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self,x,y,w,h):
+    def __init__(self,x,y,w=0,h=0):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((w,h))
-        self.image.fill(WHITE)
+        if w==0:
+            self.image=level_img.convert()
+        else:
+            self.image = pygame.Surface((w,h))
+            self.image.fill(WHITE)   
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -214,7 +219,8 @@ class character(pygame.sprite.Sprite):
                     print(counter)
                     print('YOUR SCORE:',counter['health']*10+int(game_time))
                     screen.fill(WHITE)
-                    
+                    text2 = font2.render('YOUR SCORE:'+str(counter['health']*10+int(game_time)), True, BLACK)
+                    screen.blit(text2,(150,200))
                     pygame.display.flip()
                     pygame.time.delay(2000)
                     quit()
@@ -255,7 +261,7 @@ land = Platform(0,HEIGHT-40,WIDTH,40)
 levels={}
 for i in range (12):
     
-    levels[i]=Platform(random.randrange(0,450,40),random.randrange(50,450,30),random.randrange(50,80),6)
+    levels[i]=Platform(random.randrange(0,450,40),random.randrange(50,450,30))
     platforms.add(levels[i])
 
 power_up={}
