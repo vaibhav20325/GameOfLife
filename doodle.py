@@ -35,7 +35,7 @@ game_time=0
 hit=False
 hit_time=0
 def display():
-    global game_time
+    global game_time, levels, platforms
     screen.fill(BLUE)
     #screen.blit(char,(coord_x,coord_y))
     clock.tick(30) 
@@ -232,7 +232,7 @@ class character(pygame.sprite.Sprite):
                 if i.visible:
                     i.hit_time=game_time
                     i.visible=False
-                    self.health+=10
+                    self.health+=20
                     counter['health']+=1
                     i.rect.y=random.randrange(0,300,10)
                     i.rect.x=random.randrange(0,500,10)
@@ -259,6 +259,7 @@ for i in range (100):
     flakes.add(snow[i])
 land = Platform(0,HEIGHT-40,WIDTH,40)
 levels={}
+
 for i in range (12):
     
     levels[i]=Platform(random.randrange(0,450,40),random.randrange(50,450,30))
