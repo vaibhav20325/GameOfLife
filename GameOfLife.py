@@ -113,6 +113,7 @@ def display(l):
     screen.blit(text,(411,52))
     #manual input of position
     
+    
     for i in range(len(names)):
         if i<=7:
             coord=((B_MARGIN + B_WIDTH)* i + B_MARGIN*1,500 + B_MARGIN*1)
@@ -319,7 +320,7 @@ def main():
                     
 
 #intro
-'''
+
 screen.fill(WHITE)
 screen.blit(start,(0,0))
 pygame.time.delay(3000)
@@ -333,6 +334,6 @@ while running:
         elif event.type==pygame.QUIT:
             running=False
             quit()   
-'''
+
 main()
 
