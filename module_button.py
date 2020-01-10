@@ -1,3 +1,4 @@
+#Module to read a text file and return the design
 
 def new_button(file_name,x,y,inverse=[False, False, False]):
     #inverse=(x_inv, y_inv, rot_inv)
