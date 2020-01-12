@@ -4,21 +4,28 @@ import copy
 import pygame
 import module_button
 #Display
+#------
 #Colors
+#------
 BLACK = (0, 0, 0)
 GREY=(50,50,50)
 WHITE = (255, 255, 255)
 BLUE=(127,255,212)
+#--------------
 #Box Dimensions
+#--------------
 WIDTH = 9
 HEIGHT = 9
 MARGIN = 1
+#-----------------
 #Button Dimensions
+#-----------------
 B_MARGIN=2
 B_WIDTH=60
 B_HEIGHT=18
-
+#------------------------------------------------------
 #To read the design names present in the designs folder
+#------------------------------------------------------
 names = []
 # r=root, d=directories, f = files
 for r, d, f in os.walk('design\\'):
@@ -31,7 +38,9 @@ b_color=[]
 T=0
 pygame.init()
 WINDOW_SIZE = [501, 542]
+#------------------
 #Loading the assets
+#------------------
 logo=pygame.image.load(".\logo.png")
 start=pygame.image.load(".\start.png")
 info=pygame.image.load(".\info.png")
@@ -42,12 +51,14 @@ screen = pygame.display.set_mode(WINDOW_SIZE)
 pygame.display.set_caption("GameOfLife")
 pygame.display.set_icon(winlogo)
 clock = pygame.time.Clock()
-
+#-----
 #Fonts
+#-----
 font1 = pygame.font.SysFont('freesansbold.ttf', 20)
 font2 = pygame.font.SysFont('freesansbold.ttf', 16)
+#---------
 #FUNCTIONS
-
+#---------
 
 infinite_grid=False
 fps=60
@@ -59,19 +70,22 @@ new_m=[]
 extra_size=10
 grid_size=50
 n=grid_size+2*extra_size
-
+#--------------------------------------------------------------------
 #Function to get the position of the box over which mouse is hovering
+#--------------------------------------------------------------------
 def m_coordinate():
 	return pygame.mouse.get_pos()[0] // (WIDTH + MARGIN)+extra_size, pygame.mouse.get_pos()[1] // (HEIGHT + MARGIN)
-
+#-----------------------
 #Function to render text
+#-----------------------
 def textfunc(text,textcolour, coordinate):
 	textsurface=font2.render(text, True, textcolour)
 	textrect=textsurface.get_rect()
 	textrect.center=(coordinate[0]+B_WIDTH/2,coordinate[1]+B_HEIGHT/2)
 	screen.blit(textsurface,textrect)
-	
+#--------------------------
 #Function to reset the grid
+#--------------------------
 def reset_game():
 	global fps, new_m, m, BLACK, WHITE, infinite_grid, b_color,T
 	BLACK = (0, 0, 0)
@@ -95,7 +109,9 @@ def reset_game():
 	pygame.time.delay(1000)
 	
 reset_game()
+#----------------------------
 #Function to display the grid
+#----------------------------
 def display(l):
 	#l refers to the matrix
 	global fps, n, m, button, button_grid, button_info, b_color, T
@@ -152,8 +168,9 @@ def display(l):
 	clock.tick(fps) 
 	pygame.display.flip()
 	b_color=[WHITE]*len(names)
-
+#------------------------------------------
 #Function to check the neighbours of a cell
+#------------------------------------------
 #xth row and yth column
 def check_n(x,y):
 	global m
@@ -171,7 +188,9 @@ def check_n(x,y):
 		new_m[x][y]=1
 	else:
 		new_m[x][y]=0  
+#----------------------------------
 #Function to simulate infinite grid
+#----------------------------------
 def infinite_func():
 	global new_m
 	
@@ -199,13 +218,15 @@ def infinite_func():
 		for i in range(7,7+grid_size):
 			for j in range(grid_size+extra_size,n):
 				new_m[i][j]=0
-
-#Function which when given a tuple of coordinates assigns a suitable value to the corresponding postions of matrix
+#------------------------------------------------------------------------------------------------------------------
+#Function which when given a tuple of coordinates assigns a suitable value to the corresponding positions of matrix
+#------------------------------------------------------------------------------------------------------------------
 def preset(tupl,l,n=1):
 	for i in tupl:
 		l[i[0]][i[1]]=n
-
-#Function which handles the event between clicking on a button and clicking on the grid		
+#--------------------------------------------------------------------------------
+#Function which handles the event btw clicking on a button & clicking on the grid
+#--------------------------------------------------------------------------------		
 def button_click(desn,file_name):
 	global m, new_m,inv
 	hover=True
@@ -240,8 +261,9 @@ def button_click(desn,file_name):
 						inv[1]= False
 					if event.key== pygame.K_DOWN:
 						inv[1]= True
-
+#-------------
 #main function
+#-------------
 def main():    
 	global m, fps, n,new_m, WIDTH, HEIGHT, MARGIN, infinite_grid, WHITE, BLACK,T
 	display(m)
