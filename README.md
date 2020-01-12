@@ -35,3 +35,5 @@ To reset the initial position Press <kbd>Esc</kbd>
 
 **Press <kbd>q</kbd> on the first page to enable infinite grid**
 
+https://docs.google.com/document/d/1PdtiJzSxUtwI9vErKIdYiXqsCxVfWDCH9aIA_VolYp8/edit?usp=sharing
+
