@@ -2,6 +2,14 @@
 School Project
 By-Vaibhav Agarwal
 
+Make sure to have the pygame library installed on the system.
+
+### Installation
+In order to install pygame, use pip in Command Prompt.
+```
+py -m pip install -U pygame --user
+```
+
 Ensure that you have the images in the same folder.
 
 **The design folder has all the designs,you can create your own deisgn by creating a .txt file in the design folder or copy one from <http://www.radicaleye.com/lifepage/glossary.html>**
